@@ -10,17 +10,19 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.thiennguyen.estatelisting.R
+import com.thiennguyen.estatelisting.extension.collectAsEffect
+import com.thiennguyen.estatelisting.extension.showToast
 import com.thiennguyen.estatelisting.models.EstateUiModel
 import com.thiennguyen.estatelisting.ui.screens.carditem.EstateCardItem
 import com.thiennguyen.estatelisting.ui.theme.AppTheme.dimensions
@@ -30,12 +32,12 @@ import com.thiennguyen.estatelisting.ui.theme.EstateListingTheme
 fun EstateListingScreen(
     viewModel: EstateListingViewModel = hiltViewModel(),
 ) {
-    LaunchedEffect(Unit) {
-        viewModel.getEstates()
-    }
+    val context = LocalContext.current
 
     val isLoading by viewModel.isLoading.collectAsStateWithLifecycle()
     val estates: List<EstateUiModel> by viewModel.estates.collectAsStateWithLifecycle()
+
+    viewModel.error.collectAsEffect { e -> e.showToast(context) }
 
     EstateListScreenContent(
         estates = estates,

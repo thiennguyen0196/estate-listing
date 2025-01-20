@@ -52,7 +52,7 @@ fun EstateCardItem(
         Text(
             text = estate.title,
             style = typography.t2,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(horizontal = dimensions.spacingSmall)
@@ -61,7 +61,7 @@ fun EstateCardItem(
             text = estate.address,
             style = typography.b2,
             color = colors.themeColors.tertiary,
-            maxLines = 1,
+            maxLines = 2,
             overflow = TextOverflow.Ellipsis,
             modifier = Modifier
                 .padding(horizontal = dimensions.spacingSmall)
