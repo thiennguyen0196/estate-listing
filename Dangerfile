@@ -34,5 +34,5 @@ end
 # or if any modified file's coverage is under 95%
 
 kover_file_template = "app/build/reports/kover/report.xml"
-markdown "## Kover report for Github Profile:"
-shroud.reportKover "Github Profile Unit Tests", kover_file_template, 80, 95, false
+markdown "## Kover report for Estate Listing:"
+shroud.reportKover "Estate Listing Unit Tests", kover_file_template, 80, 95, false
