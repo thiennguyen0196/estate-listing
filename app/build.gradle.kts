@@ -19,7 +19,7 @@ val getVersionCode: () -> Int = {
     if (project.hasProperty("versionCode")) {
         (project.property("versionCode") as String).toInt()
     } else {
-        libs.versions.androidVersionCode.get().toInt()
+        Versions.ANDROID_VERSION_CODE
     }
 }
 
