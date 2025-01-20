@@ -1,76 +1,92 @@
 package com.thiennguyen.estatelisting.ui.screens.list
 
-import com.thiennguyen.estatelisting.ui.base.BaseViewModel
+import androidx.lifecycle.viewModelScope
+import com.thiennguyen.estatelisting.domain.usecase.BookmarkEstateUseCase
+import com.thiennguyen.estatelisting.domain.usecase.GetBookmarkedEstateIdsUseCase
+import com.thiennguyen.estatelisting.domain.usecase.GetEstateListingUseCase
+import com.thiennguyen.estatelisting.domain.usecase.RemoveBookmarkedEstateUseCase
 import com.thiennguyen.estatelisting.models.EstateUiModel
+import com.thiennguyen.estatelisting.models.toUiModel
+import com.thiennguyen.estatelisting.ui.base.BaseViewModel
+import com.thiennguyen.estatelisting.utils.DispatchersProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.delay
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flowOn
+import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.onEach
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
-class EstateListingViewModel @Inject constructor() : BaseViewModel() {
+class EstateListingViewModel @Inject constructor(
+    private val dispatchersProvider: DispatchersProvider,
+    private val getEstateListingUseCase: GetEstateListingUseCase,
+    private val getBookmarkedEstateIdsUseCase: GetBookmarkedEstateIdsUseCase,
+    private val bookmarkEstateUseCase: BookmarkEstateUseCase,
+    private val removeBookmarkedEstateUseCase: RemoveBookmarkedEstateUseCase,
+) : BaseViewModel() {
 
     private val _estates = MutableStateFlow<List<EstateUiModel>>(emptyList())
     val estates = _estates.asStateFlow()
 
-    @Suppress("MaxLineLength")
-    suspend fun getEstates() {
-        showLoading()
-        delay(1000L)
-        hideLoading()
-        _estates.value = listOf(
-            EstateUiModel(
-                id = "id1",
-                imageUrl = "https://media2.homegate.ch/listings/heia/104123262/image/6b53db714891bfe2321cc3a6d4af76e1.jpg",
-                title = "title1",
-                price = "price1",
-                address = "address1",
-                isBookmarked = false,
-            ),
-            EstateUiModel(
-                id = "id2",
-                imageUrl = "https://media2.homegate.ch/listings/heia/104123262/image/328c41c0c0805299f5c28d680fbac4d9.jpg",
-                title = "title2",
-                price = "price2",
-                address = "address2",
-                isBookmarked = true,
-            ),
-            EstateUiModel(
-                id = "id3",
-                imageUrl = "https://media2.homegate.ch/listings/heia/104123262/image/2333f298be7cc3609daaaf2e39e91bf9.jpg",
-                title = "title3",
-                price = "price3",
-                address = "address3",
-                isBookmarked = true,
-            ),
-            EstateUiModel(
-                id = "id4",
-                imageUrl = "https://media2.homegate.ch/listings/heia/104123262/image/8944c80cb8afb8d5d579ca4faf7dbbb4.jp",
-                title = "title4",
-                price = "price4",
-                address = "address4",
-                isBookmarked = true,
-            ),
-            EstateUiModel(
-                id = "id5",
-                imageUrl = "https://media2.homegate.ch/listings/heia/104123262/image/bbb5b2fb8a1cf58ce690e0cfca23d266.jpg",
-                title = "title5",
-                price = "price5",
-                address = "address5",
-                isBookmarked = true,
-            ),
-        )
+    init {
+        getEstates()
     }
 
     fun updateBookmarkedItem(item: EstateUiModel) {
-        val list = _estates.value.toMutableList()
-        val editedItemIndex = list.indexOfFirst {
+        val updatedValue = !item.isBookmarked
+        val currentList = _estates.value.toMutableList()
+        val editedItemIndex = currentList.indexOfFirst {
             it.id == item.id
         }
         if (editedItemIndex != -1) {
-            list[editedItemIndex] = item.copy(isBookmarked = !item.isBookmarked)
+            currentList[editedItemIndex] = item.copy(isBookmarked = !item.isBookmarked)
         }
-        _estates.value = list
+        updateBookmarkEstate(
+            item.id,
+            updatedValue
+        )
+            .injectLoading()
+            .onEach {
+                _estates.value = currentList
+            }
+            .flowOn(dispatchersProvider.io)
+            .catch { e -> _error.emit(e) }
+            .launchIn(viewModelScope)
+    }
+
+    private fun getEstates() {
+        var bookmarkedEstateIds = emptyList<String>()
+        getBookmarkedEstateIdsUseCase.invoke()
+            .flatMapLatest {
+                bookmarkedEstateIds = it
+                getEstateListingUseCase.invoke()
+            }
+            .injectLoading()
+            .onEach {
+                _estates.value = it.map { estate ->
+                    estate.toUiModel(bookmarkedEstateIds.contains(estate.id))
+                }
+            }
+            .flowOn(dispatchersProvider.io)
+            .catch { e -> _error.emit(e) }
+            .launchIn(viewModelScope)
+    }
+
+    private fun updateBookmarkEstate(
+        id: String,
+        updatedValue: Boolean
+    ): Flow<Unit> {
+        return if (updatedValue) {
+            bookmarkEstateUseCase.invoke(id)
+        } else {
+            removeBookmarkedEstateUseCase.invoke(id)
+        }
     }
 }

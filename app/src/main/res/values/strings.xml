@@ -1,3 +1,6 @@
 <resources>
     <string name="app_name">Estate Listing</string>
+
+    <string name="error_generic">Unexpected error</string>
+    <string name="error_no_connectivity">There is no network connectivity</string>
 </resources>
