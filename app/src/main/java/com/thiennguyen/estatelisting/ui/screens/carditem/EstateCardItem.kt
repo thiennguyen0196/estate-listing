@@ -44,48 +44,11 @@ fun EstateCardItem(
             .padding(bottom = dimensions.spacingSmall),
         verticalArrangement = Arrangement.spacedBy(dimensions.spacingSmall)
     ) {
-        Box(
+        EstateCardItemImageBox(
+            estate = estate,
+            onLikeClicked = onLikeClicked,
             modifier = Modifier
-                .fillMaxWidth()
-        ) {
-            AsyncImage(
-                model = estate.imageUrl,
-                placeholder = painterResource(R.drawable.ic_placeholder),
-                error = painterResource(R.drawable.ic_placeholder),
-                fallback = painterResource(R.drawable.ic_placeholder),
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier
-                    .aspectRatio(ratio = 1.5f)
-            )
-            Text(
-                text = estate.price,
-                style = typography.b2,
-                modifier = Modifier
-                    .padding(dimensions.spacingSmall)
-                    .clip(RoundedCornerShape(dimensions.cornerSmall))
-                    .background(colors.themeColors.secondary)
-                    .padding(dimensions.spacingXSmall)
-                    .align(Alignment.BottomStart)
-            )
-            Image(
-                painter = if (estate.isBookmarked) {
-                    painterResource(R.drawable.ic_check_filled)
-                } else {
-                    painterResource(R.drawable.ic_check_outlined)
-                },
-                colorFilter = ColorFilter.tint(
-                    color = colors.themeColors.secondary
-                ),
-                contentDescription = null,
-                modifier = Modifier
-                    .align(Alignment.BottomEnd)
-                    .padding(dimensions.spacingSmall)
-                    .clickable {
-                        onLikeClicked()
-                    }
-            )
-        }
+        )
         Text(
             text = estate.title,
             style = typography.t2,
@@ -106,9 +69,60 @@ fun EstateCardItem(
     }
 }
 
+@Composable
+private fun EstateCardItemImageBox(
+    estate: EstateUiModel,
+    onLikeClicked: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+    ) {
+        AsyncImage(
+            model = estate.imageUrl,
+            placeholder = painterResource(R.drawable.ic_placeholder),
+            error = painterResource(R.drawable.ic_placeholder),
+            fallback = painterResource(R.drawable.ic_placeholder),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier
+                .aspectRatio(ratio = 1.5f)
+        )
+        Text(
+            text = estate.price,
+            style = typography.b2,
+            modifier = Modifier
+                .padding(dimensions.spacingSmall)
+                .clip(RoundedCornerShape(dimensions.cornerSmall))
+                .background(colors.themeColors.secondary)
+                .padding(dimensions.spacingXSmall)
+                .align(Alignment.BottomStart)
+        )
+        Image(
+            painter = if (estate.isBookmarked) {
+                painterResource(R.drawable.ic_check_filled)
+            } else {
+                painterResource(R.drawable.ic_check_outlined)
+            },
+            colorFilter = ColorFilter.tint(
+                color = colors.themeColors.secondary
+            ),
+            contentDescription = null,
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .padding(dimensions.spacingSmall)
+                .clickable {
+                    onLikeClicked()
+                }
+        )
+    }
+}
+
+@Suppress("MaxLineLength")
 @Preview
 @Composable
-private fun UserCardItemPreview() {
+private fun EstateCardItemPreview() {
     EstateListingTheme {
         EstateCardItem(
             estate = EstateUiModel(

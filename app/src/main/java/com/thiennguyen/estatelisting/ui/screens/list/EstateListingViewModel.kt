@@ -14,6 +14,7 @@ class EstateListingViewModel @Inject constructor() : BaseViewModel() {
     private val _estates = MutableStateFlow<List<EstateUiModel>>(emptyList())
     val estates = _estates.asStateFlow()
 
+    @Suppress("MaxLineLength")
     suspend fun getEstates() {
         showLoading()
         delay(1000L)

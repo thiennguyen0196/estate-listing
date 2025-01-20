@@ -96,6 +96,7 @@ private fun EstateListScreenContent(
     }
 }
 
+@Suppress("MaxLineLength")
 @Preview(showSystemUi = true)
 @Composable
 private fun UserListScreenPreview() {
