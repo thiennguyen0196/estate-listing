@@ -21,8 +21,8 @@
 #-renamesourcefileattribute SourceFile
 
 # Data class
--keepclassmembers class co.thiennguyen.estatelisting.data.remote.models.** { *; }
--keepclassmembers class co.thiennguyen.estatelisting.data.local.entity.** { *; }
+-keepclassmembers class com.thiennguyen.estatelisting.data.remote.response.** { *; }
+-keepclassmembers class com.thiennguyen.estatelisting.data.local.entity.** { *; }
 
 # Keep generic signature of Call, Response (R8 full mode strips signatures from non-kept items).
  -keep,allowobfuscation,allowshrinking interface retrofit2.Call
