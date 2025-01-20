@@ -75,7 +75,7 @@ private fun EstateListScreenContent(
                 .fillMaxSize()
                 .padding(padding),
         ) {
-            items(estates.size) { index ->
+            items(estates.size, key = { index -> estates[index].id }) { index ->
                 EstateCardItem(
                     estate = estates[index],
                     onLikeClicked = {
