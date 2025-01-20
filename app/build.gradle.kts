@@ -164,7 +164,7 @@ dependencies {
     implementation(libs.timber)
 
     // Chucker
-    implementation(libs.chucker)
+    debugImplementation(libs.chucker)
     releaseImplementation(libs.chucker.noop)
 
     // Test
