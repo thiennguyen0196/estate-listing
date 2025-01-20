@@ -68,7 +68,7 @@ jobs:
           ruby-version: '2.7'
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
 
-#      - name: Run Danger
-#        env:
-#          DANGER_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
-#        run: bundle exec danger
+      - name: Run Danger
+        env:
+          DANGER_GITHUB_API_TOKEN: ${{ secrets.GH_TOKEN }}
+        run: bundle exec danger
