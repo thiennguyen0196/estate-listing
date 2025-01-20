@@ -4,7 +4,6 @@ on:
   push:
     branches:
       - develop
-      - chore/#6-Setup-CD
   workflow_dispatch:
 
 jobs:
