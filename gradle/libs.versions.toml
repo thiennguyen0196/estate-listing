@@ -9,6 +9,7 @@ composeBom = "2025.01.00"
 jetbrainsKotlinJvm = "2.0.0"
 kover = "0.7.3"
 hiltAndroid = "2.51.1"
+hiltNavigationCompose = "1.0.0"
 javaxInject = "1"
 detekt = "1.21.0"
 googleServices = "4.4.2"
@@ -67,6 +68,7 @@ firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashly
 # Hilt
 hilt-android = { group = "com.google.dagger", name = "hilt-android", version.ref = "hiltAndroid" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hiltAndroid" }
+hilt-navigation-compose = { group = "androidx.hilt", name = "hilt-navigation-compose", version.ref = "hiltNavigationCompose" }
 
 # Javax Inject
 javax-inject = { group = "javax.inject", name = "javax.inject", version.ref = "javaxInject" }
